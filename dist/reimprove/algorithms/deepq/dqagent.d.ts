@@ -1,8 +1,8 @@
-import { Memento, Memory } from '../../memory';
-import { Model } from '../../model';
-import { Tensor } from '@tensorflow/tfjs-core';
-import { DQAgentConfig, AgentTrackingInformation } from '../agent_config';
-import { AbstractAgent } from '../abstract_agent';
+import { Memento, Memory } from "../../memory";
+import { Model } from "../../model";
+import { Tensor } from "@tensorflow/tfjs-core";
+import { DQAgentConfig, AgentTrackingInformation } from "../agent_config";
+import { AbstractAgent } from "../abstract_agent";
 export declare class DQAgent extends AbstractAgent {
     private model;
     private done;

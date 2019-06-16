@@ -67,7 +67,7 @@ var Academy = (function () {
         if (!agent.Name)
             agent.Name = uuid_1.v4();
         this.agents.set(agent.Name, agent);
-        return agent.Name;
+        return agent;
     };
     Academy.prototype.addTeacher = function (config, name) {
         var teacher = new teacher_1.Teacher(config, name);
@@ -100,7 +100,9 @@ var Academy = (function () {
                         if (!this.teachers.has(input.teacherName)) {
                             throw new Error("No teacher has name " + input.teacherName);
                         }
-                        return [4, this.teachers.get(input.teacherName).teach(input.agentsInput)];
+                        return [4, this.teachers
+                                .get(input.teacherName)
+                                .teach(input.agentsInput)];
                     case 2:
                         agentsActions = _a.sent();
                         agentsActions.forEach(function (value, key) {

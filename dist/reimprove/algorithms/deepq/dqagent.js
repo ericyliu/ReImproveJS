@@ -64,7 +64,7 @@ var HIST_WINDOW_MIN_SIZE = 0;
 var DEFAULT_AGENT_CONFIG = {
     memorySize: 30000,
     batchSize: 32,
-    temporalWindow: 1,
+    temporalWindow: 1
 };
 var DQAgent = (function (_super) {
     __extends(DQAgent, _super);
@@ -95,7 +95,7 @@ var DQAgent = (function (_super) {
                         return val == _this.actionsBuffer[_this.netInputWindowSize - 1 - i]
                             ? 1.0
                             : 0.0;
-                    }),
+                    })
                 ]);
                 finalInput = finalInput.concat(ten, 1);
             };
@@ -119,7 +119,7 @@ var DQAgent = (function (_super) {
         else if (Array.isArray(input))
             tensorInput = tfjs_core_1.tensor2d([input], [1, input.length]);
         else
-            throw new Error('Unable to create convenient tensor for training.');
+            throw new Error("Unable to create convenient tensor for training.");
         if (this.forwardPasses > this.AgentConfig.temporalWindow) {
             netInput = this.createNeuralNetInput(tensorInput);
             if (lodash_1.random(0, 1, true) < epsilon) {
@@ -156,7 +156,7 @@ var DQAgent = (function (_super) {
             action: this.actionsBuffer[this.netInputWindowSize - MEM_WINDOW_MIN_SIZE],
             reward: this.currentReward,
             state: this.inputsBuffer[this.netInputWindowSize - MEM_WINDOW_MIN_SIZE],
-            nextState: this.inputsBuffer[this.netInputWindowSize - 1],
+            nextState: this.inputsBuffer[this.netInputWindowSize - 1]
         });
     };
     DQAgent.prototype.createTrainingDataFromMemento = function (memento, gamma, alpha) {
@@ -174,7 +174,7 @@ var DQAgent = (function (_super) {
             future_target[memento.action] += target;
             return {
                 x: memento.state.tensor.clone(),
-                y: tfjs_core_1.tensor2d(future_target, [1, _this.model.OutputSize]),
+                y: tfjs_core_1.tensor2d(future_target, [1, _this.model.OutputSize])
             };
         });
     };
@@ -196,7 +196,7 @@ var DQAgent = (function (_super) {
                             .reduce(function (previousValue, currentValue) {
                             var res = {
                                 x: previousValue.x.concat(currentValue.x),
-                                y: previousValue.y.concat(currentValue.y),
+                                y: previousValue.y.concat(currentValue.y)
                             };
                             previousValue.x.dispose();
                             previousValue.y.dispose();
@@ -242,7 +242,7 @@ var DQAgent = (function (_super) {
         return {
             averageReward: this.rewardsHistory.mean(),
             averageLoss: this.lossesHistory.mean(),
-            name: this.Name,
+            name: this.Name
         };
     };
     return DQAgent;

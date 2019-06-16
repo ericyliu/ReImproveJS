@@ -1,10 +1,10 @@
-import { Memento, MementoTensor, Memory } from '../../memory';
-import { Model } from '../../model';
-import { Tensor, tensor, tensor2d, tidy } from '@tensorflow/tfjs-core';
-import { range, random } from 'lodash';
-import { TypedWindow } from '../../misc/typed_window';
-import { DQAgentConfig, AgentTrackingInformation } from '../agent_config';
-import { AbstractAgent } from '../abstract_agent';
+import { Memento, MementoTensor, Memory } from "../../memory";
+import { Model } from "../../model";
+import { Tensor, tensor, tensor2d, tidy } from "@tensorflow/tfjs-core";
+import { range, random } from "lodash";
+import { TypedWindow } from "../../misc/typed_window";
+import { DQAgentConfig, AgentTrackingInformation } from "../agent_config";
+import { AbstractAgent } from "../abstract_agent";
 
 const MEM_WINDOW_MIN_SIZE = 2;
 const HIST_WINDOW_SIZE = 100;
@@ -13,7 +13,7 @@ const HIST_WINDOW_MIN_SIZE = 0;
 const DEFAULT_AGENT_CONFIG: DQAgentConfig = {
   memorySize: 30000,
   batchSize: 32,
-  temporalWindow: 1,
+  temporalWindow: 1
 };
 
 export class DQAgent extends AbstractAgent {
@@ -35,12 +35,12 @@ export class DQAgent extends AbstractAgent {
   constructor(
     private model: Model,
     agentConfig?: DQAgentConfig,
-    name?: string,
+    name?: string
   ) {
     super(agentConfig, name);
     this.AgentConfig = {
       ...DEFAULT_AGENT_CONFIG,
-      ...agentConfig,
+      ...agentConfig
     } as DQAgentConfig;
     this.done = false;
     this.currentReward = 0;
@@ -48,19 +48,19 @@ export class DQAgent extends AbstractAgent {
     this.lossesHistory = new TypedWindow<number>(
       HIST_WINDOW_SIZE,
       HIST_WINDOW_MIN_SIZE,
-      -1,
+      -1
     );
     this.rewardsHistory = new TypedWindow<number>(
       HIST_WINDOW_SIZE,
       HIST_WINDOW_MIN_SIZE,
-      null,
+      null
     );
 
     this.memory = new Memory({ size: <number>this.AgentConfig.memorySize });
 
     this.netInputWindowSize = Math.max(
       <number>this.AgentConfig.temporalWindow,
-      MEM_WINDOW_MIN_SIZE,
+      MEM_WINDOW_MIN_SIZE
     );
     this.actionsBuffer = new Array(this.netInputWindowSize);
     this.inputsBuffer = new Array(this.netInputWindowSize);
@@ -77,7 +77,7 @@ export class DQAgent extends AbstractAgent {
         // Here we concatenate input with previous input
         finalInput = finalInput.concat(
           this.statesBuffer[this.netInputWindowSize - 1 - i],
-          1,
+          1
         );
 
         // And we add to previous input previous action
@@ -86,8 +86,8 @@ export class DQAgent extends AbstractAgent {
           range(0, this.model.OutputSize).map(val =>
             val == this.actionsBuffer[this.netInputWindowSize - 1 - i]
               ? 1.0
-              : 0.0,
-          ),
+              : 0.0
+          )
         ]);
         finalInput = finalInput.concat(ten, 1);
       }
@@ -103,7 +103,7 @@ export class DQAgent extends AbstractAgent {
   infer(
     input: number[] | number[][],
     epsilon: number,
-    keepTensors: boolean = true,
+    keepTensors: boolean = true
   ): number {
     this.forwardPasses += 1;
 
@@ -114,7 +114,7 @@ export class DQAgent extends AbstractAgent {
       tensorInput = tensor(input);
     else if (Array.isArray(input))
       tensorInput = tensor2d([input as number[]], [1, input.length]);
-    else throw new Error('Unable to create convenient tensor for training.');
+    else throw new Error("Unable to create convenient tensor for training.");
 
     if (this.forwardPasses > <number>this.AgentConfig.temporalWindow) {
       netInput = this.createNeuralNetInput(tensorInput);
@@ -160,14 +160,14 @@ export class DQAgent extends AbstractAgent {
       action: this.actionsBuffer[this.netInputWindowSize - MEM_WINDOW_MIN_SIZE],
       reward: this.currentReward,
       state: this.inputsBuffer[this.netInputWindowSize - MEM_WINDOW_MIN_SIZE],
-      nextState: this.inputsBuffer[this.netInputWindowSize - 1],
+      nextState: this.inputsBuffer[this.netInputWindowSize - 1]
     });
   }
 
   createTrainingDataFromMemento(
     memento: Memento,
     gamma: number,
-    alpha: number,
+    alpha: number
   ): { x: Tensor; y: Tensor } {
     return tidy(() => {
       let target = memento.reward;
@@ -183,7 +183,7 @@ export class DQAgent extends AbstractAgent {
       future_target[memento.action] += target;
       return {
         x: memento.state.tensor.clone(),
-        y: tensor2d(future_target, [1, this.model.OutputSize]),
+        y: tensor2d(future_target, [1, this.model.OutputSize])
       };
     });
   }
@@ -202,7 +202,7 @@ export class DQAgent extends AbstractAgent {
       .reduce((previousValue, currentValue) => {
         const res = {
           x: previousValue.x.concat(currentValue.x),
-          y: previousValue.y.concat(currentValue.y),
+          y: previousValue.y.concat(currentValue.y)
         };
 
         previousValue.x.dispose();
@@ -248,7 +248,7 @@ export class DQAgent extends AbstractAgent {
     return {
       averageReward: this.rewardsHistory.mean(),
       averageLoss: this.lossesHistory.mean(),
-      name: this.Name,
+      name: this.Name
     };
   }
 }

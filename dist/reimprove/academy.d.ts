@@ -1,3 +1,4 @@
+import { DQAgent } from "./algorithms/deepq/dqagent";
 import { TeacherTrackingInformation, TeachingConfig } from "./teacher";
 import { Model } from "./model";
 import { DQAgentConfig } from "./algorithms/agent_config";
@@ -21,7 +22,7 @@ export declare class Academy {
     private logger;
     private config;
     constructor(config?: AcademyConfig);
-    addAgent(config: BuildAgentConfig, name?: string): string;
+    addAgent(config: BuildAgentConfig, name?: string): DQAgent;
     addTeacher(config?: TeachingConfig, name?: string): string;
     assignTeacherToAgent(agentName: string, teacherName: string): void;
     step(inputs: AcademyStepInput[] | AcademyStepInput): Promise<Map<string, number>>;
